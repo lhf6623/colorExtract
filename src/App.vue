@@ -1,11 +1,20 @@
 <template>
-  <div class="app">
+  <div class="w-232px @dark:bg-#282828 bg-white">
     <ColorExtract></ColorExtract>
   </div>
 </template>
 
-<script setup lang="tsx">
+<script setup lang="ts">
+  import { onMounted } from "vue";
   import ColorExtract from "./ColorExtract.vue";
+  onMounted(() => {
+    // 禁止右键
+    document.oncontextmenu = function (e) {
+      if (import.meta.env.PROD) {
+        e.preventDefault();
+      }
+    };
+  });
 </script>
 
 <style>
@@ -18,7 +27,6 @@
   }
 
   body {
-    min-height: 100vh;
     font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
       Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue",
       sans-serif;
@@ -27,17 +35,16 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     position: relative;
+    overflow: hidden;
   }
 
   #app {
     margin: 0;
     padding: 0;
-    height: 100vh;
-  }
-  .app {
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100vh;
+    width: 100vw;
   }
 </style>

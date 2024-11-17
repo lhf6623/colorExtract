@@ -1,6 +1,6 @@
 import { getInt, getRange } from "./util";
 // 将颜色名转换为 RGB
-function colorNameToRGB(color) {
+function colorNameToRGB(color: string) {
   const colors = {
     white: [255, 255, 255],
     black: [0, 0, 0],
@@ -11,10 +11,10 @@ function colorNameToRGB(color) {
     lime: [0, 255, 0],
     yellow: [255, 255, 0],
   };
-  return colors[color] || [0, 0, 0];
+  return colors[color as keyof typeof colors] || [0, 0, 0];
 }
 // 生成右上角的渐变色
-function generateRightTopGradient(colors, segments) {
+function generateRightTopGradient(colors: string[], segments: number) {
   const gradient = [];
   const numColors = colors.length;
   for (let i = 0; i < numColors - 1; i++) {
@@ -154,7 +154,7 @@ export function findPositionForColor(targetColor: number[], tolerance = 3) {
   const white = [255, 255, 255];
   const black = [0, 0, 0];
   const segments = gradientColors.length;
-  const maxIterations = 60; // 遍历步数
+  const maxIterations = 50; // 遍历步数
   for (let i = 0; i < segments; i++) {
     const rightTopColor = gradientColors[i];
     for (let u = 0; u <= 1; u += 1 / maxIterations) {

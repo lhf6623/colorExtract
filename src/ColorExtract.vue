@@ -16,7 +16,7 @@
       <ColorDropper @change="getDropperColor" />
       <CopyColor :color="targetColorCss" ml--5px />
       <div class="flex flex-col gap-8px">
-        <MoveArea :y="5" :x="rainbowX" :lock="['y']" @change="getRainbowColor">
+        <MoveArea :y="6" :x="rainbowX" :lock="['y']" @change="getRainbowColor">
           <ColorGradient
             :color="rainbowBarCss"
             class="h-12px w-130px bg-#fff rounded-2px"
@@ -27,7 +27,7 @@
             ></div>
           </template>
         </MoveArea>
-        <MoveArea :y="5" :x="alpha * barWidth" :lock="['y']" @change="getAlpha">
+        <MoveArea :y="6" :x="alpha * barWidth" :lock="['y']" @change="getAlpha">
           <div class="relative h-12px w-130px rounded-2px overflow-hidden">
             <ColorGradient
               :color="['transparent', rgbToHex(targetColor)]"
@@ -66,11 +66,11 @@
   import { getRange, getInt } from "./util";
   import ColorInput from "./ColorInput.vue";
   // hex rgba
-  const colorType = ref("hex");
+  const colorType = ref<"hex" | "rgba">("rgba");
 
   // 单一颜色选择
   const selectLoc = reactive({
-    x: 232,
+    x: 0,
     y: 0,
   });
   // 彩虹条 x 轴位置
@@ -80,12 +80,19 @@
   const barWidth = 130;
 
   // 目标颜色
-  const targetColor = ref([255, 0, 0]);
+  const targetColor = ref([255, 255, 255]);
   const alpha = ref(1);
 
-  const targetColorCss = computed(() =>
-    rgbToHex([...targetColor.value, alpha.value])
-  );
+  const targetColorCss = computed(() => {
+    const [r, g, b, a] = [...targetColor.value, alpha.value];
+
+    const hex = rgbToHex([r, g, b, a]);
+
+    const _a = a === 1 ? "" : ` / ${getInt(a * 100)}%`;
+    const rgba = `rgba(${r} ${g} ${b}${_a})`;
+
+    return colorType.value === "hex" ? hex : rgba;
+  });
 
   const rainbowBarCss = computed(() => {
     return rainbowBar.map((color) => rgbToHex(color));
@@ -124,7 +131,7 @@
   }
 
   function getAlpha(x: number) {
-    alpha.value = getRange(getInt(x / barWidth, 4), 1);
+    alpha.value = getRange(getInt(x / barWidth, 2), 1);
   }
   function handleSelectColor(x: number, y: number) {
     selectLoc.x = x;

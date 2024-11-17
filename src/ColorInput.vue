@@ -64,6 +64,8 @@
     (e: "typeChange", type: "hex" | "rgba"): void;
   }>();
 
+  const isDraw = ref(true);
+
   function testHex(hex: string) {
     hex = hex.replace("#", "").toLowerCase();
     if (![3, 4, 6, 8].includes(hex.length)) return false;
@@ -77,6 +79,7 @@
     return false;
   }
   let tim = 0;
+  let timt: NodeJS.Timeout | null = null;
   function handleChange(e: Event, index: number) {
     const value = (e.target as HTMLInputElement).value;
     if (props.type === "hex" && testHex(value)) {
@@ -94,15 +97,36 @@
         tim = Date.now();
       }
     }
+
+    isDraw.value = false;
+    if (timt) {
+      clearTimeout(timt);
+      timt = null;
+    }
+    timt = setTimeout(() => {
+      isDraw.value = true;
+    }, 1000);
   }
 
-  const data = ref<(number | string)[]>([rgbToHex(props.color)]);
+  const data = ref<(number | string)[]>(
+    props.type === "hex" ? [rgbToHex(props.color)] : [...props.color]
+  );
 
   watch(
     () => props.type,
     () => {
       data.value =
         props.type === "hex" ? [rgbToHex(props.color)] : [...props.color];
+    }
+  );
+
+  watch(
+    () => props.color,
+    () => {
+      if (isDraw.value) {
+        data.value =
+          props.type === "hex" ? [rgbToHex(props.color)] : [...props.color];
+      }
     }
   );
 
@@ -115,12 +139,13 @@
   });
   const rgba = computed(() => {
     const [r, g, b, a] = props.color;
-    return `rgba(${r} ${g} ${b} / ${getInt(a * 100)}%)`;
+
+    const _a = a === 1 ? "" : ` / ${getInt(a * 100)}%`;
+    return `rgba(${r} ${g} ${b}${_a})`;
   });
 
   function handleChangeType(e: Event) {
     const value = (e.target as HTMLInputElement).value as "hex" | "rgba";
-    // type.value = value;
     emit("typeChange", value);
   }
 </script>

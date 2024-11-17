@@ -74,7 +74,10 @@ export const ColorDropper = defineComponent({
 
 export const CopyColor = defineComponent({
   props: {
-    color: String,
+    color: {
+      type: String,
+      default: "",
+    },
   },
   setup(props) {
     function handleCopy() {
