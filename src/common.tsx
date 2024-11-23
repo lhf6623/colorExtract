@@ -1,5 +1,4 @@
-import { computed, defineComponent, reactive, ref, watch } from "vue";
-import { hexToRgba, rgbToHex } from "./color";
+import { computed, defineComponent, ref } from "vue";
 
 export const Grids = defineComponent({
   props: {
@@ -39,39 +38,6 @@ export function ColorGradient(props: { color: string[] }) {
   return <div style={`background: linear-gradient(to right, ${color});`}></div>;
 }
 
-export const ColorDropper = defineComponent({
-  emits: ["change"],
-  setup(_, { emit }) {
-    const active = ref("");
-    function handleEyeDropper() {
-      active.value = "active";
-      if (!window.EyeDropper) {
-        throw new Error("你的浏览器不支持 EyeDropper API");
-      }
-      if (active.value) {
-        const eyeDropper = new window.EyeDropper();
-        eyeDropper
-          .open()
-          .then(({ sRGBHex }) => {
-            const rgb = hexToRgba(sRGBHex);
-            emit("change", rgb);
-          })
-          .finally(() => {
-            active.value = "";
-          });
-      }
-    }
-    return () => (
-      <div
-        onClick={handleEyeDropper}
-        class={`${active.value} flex-center group/dropper w-26px h-26px @dark-hover-bg-#484848 @dark-active:bg-#48484888 hover-bg-#efefef99 active-bg-#efefefff flex-center rounded-2px`}
-      >
-        <i class='text-22px @dark:text-white text-#1f1f1f @dark-group-[.active]/dropper:text-#7cacf8 group-[.active]/dropper:text-#1c6ef3 i-fluent-eyedropper-16-regular'></i>
-      </div>
-    );
-  },
-});
-
 export const CopyColor = defineComponent({
   props: {
     color: {
@@ -80,19 +46,36 @@ export const CopyColor = defineComponent({
     },
   },
   setup(props) {
+    const isCopy = ref(false);
+    let tim: NodeJS.Timeout | null = null;
+
     function handleCopy() {
       navigator.clipboard.writeText(props.color);
+      isCopy.value = true;
+      if (tim) {
+        clearTimeout(tim);
+        tim = null;
+      }
+      tim = setTimeout(handleMouseout, 3000);
     }
-
+    const icon = computed(() =>
+      isCopy.value
+        ? "i-ph-checks-light !text-green"
+        : "text-white i-fluent-copy-32-light"
+    );
+    function handleMouseout() {
+      isCopy.value = false;
+    }
     return () => (
       <div class='relative overflow-hidden w-32px h-32px rounded-full'>
         <div
+          onMouseout={handleMouseout}
           onClick={handleCopy}
           style={{ background: `${props.color}` }}
           class='group absolute top-0 left-0 z-1 b-solid b-1px @dark:b-#fff b-#c7c7c7 overflow-hidden w-32px h-32px rounded-full flex-center transition-all'
         >
-          <div class=' w-full bg-#fff4 active:bg-#fff5 h-full hidden group-hover:flex flex-center'>
-            <i class='text-white w-18px h-18px mix-blend-difference i-fluent-copy-32-light'></i>
+          <div class='w-full bg-#fff4 active:bg-#fff5 h-full hidden group-hover:flex flex-center'>
+            <i class={`w-18px h-18px mix-blend-difference ${icon.value}`}></i>
           </div>
         </div>
         <Grids col={6} row={6} />

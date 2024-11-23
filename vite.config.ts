@@ -5,7 +5,7 @@ import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import UnoCSS from "unocss/vite";
 
-const host = process.env.TAURI_DEV_HOST;
+const host = !!process.env.TAURI_ENV_DEBUG;
 
 // https://vite.dev/config/
 export default defineConfig({

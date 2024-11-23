@@ -62,9 +62,10 @@
     gradientColors,
     findPositionForColor,
   } from "./color";
-  import { ColorDropper, CopyColor, ColorGradient, Grids } from "./common";
+  import { CopyColor, ColorGradient, Grids } from "./common";
   import { getRange, getInt } from "./util";
   import ColorInput from "./ColorInput.vue";
+  import ColorDropper from "./ColorDropper.vue";
   // hex rgba
   const colorType = ref<"hex" | "rgba">("rgba");
 

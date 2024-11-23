@@ -10,8 +10,10 @@
     "beforeBuildCommand": "pnpm build"
   },
   "app": {
+    "macOSPrivateApi": true,
     "windows": [
       {
+        "label": "main",
         "title": "color-extract",
         "titleBarStyle": "Transparent",
         "width": 232,
