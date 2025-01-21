@@ -76,14 +76,18 @@
   });
   // 彩虹条 x 轴位置
   const rainbowX = ref(0);
+  // 色块右上角的颜色
   const selectColor = ref([255, 0, 0]);
+  // 用于在 style 中展示
   const selectColorCss = computed(() => rgbToHex(selectColor.value));
   const barWidth = 130;
 
   // 目标颜色
   const targetColor = ref([255, 255, 255]);
+  // 透明度
   const alpha = ref(1);
 
+  // 目标颜色 最终复制的颜色
   const targetColorCss = computed(() => {
     const [r, g, b, a] = [...targetColor.value, alpha.value];
 
@@ -137,7 +141,7 @@
   function handleSelectColor(x: number, y: number) {
     selectLoc.x = x;
     selectLoc.y = y;
-    targetColor.value = getSelectColor(x, y, [255, 0, 0]);
+    targetColor.value = getSelectColor(x, y, selectColor.value);
   }
 </script>
 

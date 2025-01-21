@@ -47,7 +47,7 @@ export const CopyColor = defineComponent({
   },
   setup(props) {
     const isCopy = ref(false);
-    let tim: NodeJS.Timeout | null = null;
+    let tim: number | null | undefined = null;
 
     function handleCopy() {
       navigator.clipboard.writeText(props.color);

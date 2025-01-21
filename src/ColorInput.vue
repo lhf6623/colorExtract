@@ -79,7 +79,7 @@
     return false;
   }
   let tim = 0;
-  let timt: NodeJS.Timeout | null = null;
+  let timt: number | null = null;
   function handleChange(e: Event, index: number) {
     const value = (e.target as HTMLInputElement).value;
     if (props.type === "hex" && testHex(value)) {
