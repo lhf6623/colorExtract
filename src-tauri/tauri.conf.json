@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "color-extract",
+        "title": "颜色提取",
         "titleBarStyle": "Transparent",
         "width": 232,
         "height": 244,
