@@ -1,4 +1,10 @@
-import { getInt, getRange } from "./util";
+import { roundTo, getRange } from "./util";
+
+// 色板尺寸常量
+export const SELECT_WIDTH = 232;
+export const SELECT_HEIGHT = 128;
+export const BAR_WIDTH = 130;
+export const GRADIENT_SEGMENTS = SELECT_HEIGHT / 6;
 // 将颜色名转换为 RGB
 function colorNameToRGB(color: string) {
   const colors = {
@@ -31,7 +37,7 @@ function generateRightTopGradient(colors: string[], segments: number) {
 // 生成右上角渐变色
 export const gradientColors = generateRightTopGradient(
   ["red", "magenta", "blue", "cyan", "lime", "yellow", "red"],
-  128 / 6
+  GRADIENT_SEGMENTS
 );
 
 // 彩虹条
@@ -79,7 +85,7 @@ export const hexToRgba = (hex: string) => {
   for (let i = 0; i < 3; i++) {
     rgb.push(parseInt(hex.substring(i * 2, i * 2 + 2), 16));
   }
-  const a = getInt(parseInt(hex.substring(6, 8), 16) / 255, 4);
+  const a = roundTo(parseInt(hex.substring(6, 8), 16) / 255, 4);
   return [...rgb, a];
 };
 export function interpolateColor(rgb1: number[], rgb2: number[], t: number) {
@@ -98,8 +104,8 @@ export function interpolateColor(rgb1: number[], rgb2: number[], t: number) {
   return [getInt(r), getInt(g), getInt(b)];
 }
 export function getSelectColor(x: number, y: number, rt_color?: number[]) {
-  const h = 128;
-  const w = 232;
+  const h = SELECT_HEIGHT;
+  const w = SELECT_WIDTH;
   // 示例调用
   const x1 = [255, 255, 255]; // 左上角颜色 (白色)
   const y1 = rt_color ?? [255, 0, 0]; // 右上角颜色 (红色)
@@ -176,6 +182,9 @@ export function findPositionForColor(targetColor: number[], tolerance = 3) {
         }
       }
     }
+  }
+  if (tolerance > 50) {
+    return { x: 0, y: 0, rightTopIndex: 0, rightTopColor: gradientColors[0] };
   }
   return findPositionForColor(targetColor, tolerance + 1);
 }

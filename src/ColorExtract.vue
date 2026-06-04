@@ -61,9 +61,12 @@
     rainbowBar,
     gradientColors,
     findPositionForColor,
+    SELECT_WIDTH,
+    SELECT_HEIGHT,
+    BAR_WIDTH,
   } from "./color";
   import { CopyColor, ColorGradient, Grids } from "./common";
-  import { getRange, getInt } from "./util";
+  import { getRange, roundTo } from "./util";
   import ColorInput from "./ColorInput.vue";
   import ColorDropper from "./ColorDropper.vue";
   // hex rgba
@@ -80,7 +83,7 @@
   const selectColor = ref([255, 0, 0]);
   // 用于在 style 中展示
   const selectColorCss = computed(() => rgbToHex(selectColor.value));
-  const barWidth = 130;
+  const barWidth = BAR_WIDTH;
 
   // 目标颜色
   const targetColor = ref([255, 255, 255]);
@@ -93,7 +96,7 @@
 
     const hex = rgbToHex([r, g, b, a]);
 
-    const _a = a === 1 ? "" : ` / ${getInt(a * 100)}%`;
+    const _a = a === 1 ? "" : ` / ${roundTo(a * 100)}%`;
     const rgba = `rgba(${r} ${g} ${b}${_a})`;
 
     return colorType.value === "hex" ? hex : rgba;
@@ -120,8 +123,8 @@
       targetColor.value
     );
 
-    selectLoc.x = getRange(Math.round(x * 232) | 0, 232);
-    selectLoc.y = getRange(Math.round(y * 128) | 0, 128);
+    selectLoc.x = getRange(Math.round(x * SELECT_WIDTH) | 0, SELECT_WIDTH);
+    selectLoc.y = getRange(Math.round(y * SELECT_HEIGHT) | 0, SELECT_HEIGHT);
     rainbowX.value = rightTopIndex;
     selectColor.value = rightTopColor;
     alpha.value = a;
@@ -136,7 +139,7 @@
   }
 
   function getAlpha(x: number) {
-    alpha.value = getRange(getInt(x / barWidth, 2), 1);
+    alpha.value = getRange(roundTo(x / barWidth, 2), 1);
   }
   function handleSelectColor(x: number, y: number) {
     selectLoc.x = x;

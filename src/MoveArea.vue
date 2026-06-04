@@ -86,9 +86,13 @@
     rect = { width, height, left, top };
   }
 
+  let resizeObserver: ResizeObserver | null = null;
+
   onMounted(() => {
+    getDomClient();
+
     // 创建一个 ResizeObserver 实例
-    const resizeObserver = new ResizeObserver(() => {
+    resizeObserver = new ResizeObserver(() => {
       getDomClient();
     });
 
@@ -102,6 +106,9 @@
   });
 
   onUnmounted(() => {
+    resizeObserver?.disconnect();
+    resizeObserver = null;
+
     selectColorRef.value?.removeEventListener("mousedown", start);
     document?.removeEventListener("mouseup", stop);
 

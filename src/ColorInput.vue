@@ -44,9 +44,9 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref, watch } from "vue";
+  import { computed, onUnmounted, ref, watch } from "vue";
   import { hexToRgba, rgbToHex } from "./color";
-  import { getInt } from "./util";
+  import { roundTo } from "./util";
 
   const props = defineProps({
     color: {
@@ -78,8 +78,9 @@
     if (index === 3 && data >= 0 && data <= 1) return true;
     return false;
   }
-  let tim = 0;
-  let timt: number | null = null;
+  const lastEmitTime = ref(0);
+  let drawTimeout: ReturnType<typeof setTimeout> | null = null;
+
   function handleChange(e: Event, index: number) {
     const value = (e.target as HTMLInputElement).value;
     if (props.type === "hex" && testHex(value)) {
@@ -88,25 +89,30 @@
     }
     if (props.type === "rgba" && testRgba(+value, index)) {
       data.value[index] = value;
-      if (Date.now() - tim > 1000) {
+      if (Date.now() - lastEmitTime.value > 1000) {
         emit(
           "colorChange",
           data.value.map((n) => +n)
         );
-
-        tim = Date.now();
+        lastEmitTime.value = Date.now();
       }
     }
 
     isDraw.value = false;
-    if (timt) {
-      clearTimeout(timt);
-      timt = null;
+    if (drawTimeout) {
+      clearTimeout(drawTimeout);
     }
-    timt = setTimeout(() => {
+    drawTimeout = setTimeout(() => {
       isDraw.value = true;
     }, 1000);
   }
+
+  onUnmounted(() => {
+    if (drawTimeout) {
+      clearTimeout(drawTimeout);
+      drawTimeout = null;
+    }
+  });
 
   const data = ref<(number | string)[]>(
     props.type === "hex" ? [rgbToHex(props.color)] : [...props.color]
@@ -140,7 +146,7 @@
   const rgba = computed(() => {
     const [r, g, b, a] = props.color;
 
-    const _a = a === 1 ? "" : ` / ${getInt(a * 100)}%`;
+    const _a = a === 1 ? "" : ` / ${roundTo(a * 100)}%`;
     return `rgba(${r} ${g} ${b}${_a})`;
   });
 

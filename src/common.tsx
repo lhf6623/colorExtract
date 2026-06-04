@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, onUnmounted, ref } from "vue";
 
 export const Grids = defineComponent({
   props: {
@@ -47,7 +47,7 @@ export const CopyColor = defineComponent({
   },
   setup(props) {
     const isCopy = ref(false);
-    let tim: number | null | undefined = null;
+    let tim: ReturnType<typeof setTimeout> | null = null;
 
     function handleCopy() {
       navigator.clipboard.writeText(props.color);
@@ -58,6 +58,12 @@ export const CopyColor = defineComponent({
       }
       tim = setTimeout(handleMouseout, 3000);
     }
+    onUnmounted(() => {
+      if (tim) {
+        clearTimeout(tim);
+        tim = null;
+      }
+    });
     const icon = computed(() =>
       isCopy.value
         ? "i-ph-checks-light !text-green"
