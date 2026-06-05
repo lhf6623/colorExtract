@@ -5,9 +5,82 @@
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Color Extract</title>
+    <style>
+      /* 加载动画 — Vue mount 后自动被替换 */
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+      }
+      #app {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+        background: #fff;
+      }
+      @media (prefers-color-scheme: dark) {
+        #app {
+          background: #282828;
+        }
+      }
+      .loader {
+        display: flex;
+        gap: 6px;
+      }
+      .loader .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        animation: pulse 1.2s ease-in-out infinite;
+      }
+      .loader .dot:nth-child(1) { animation-delay: 0s; }
+      .loader .dot:nth-child(2) { animation-delay: 0.2s; }
+      .loader .dot:nth-child(3) { animation-delay: 0.4s; }
+
+      @keyframes pulse {
+        0%, 60%, 100% {
+          transform: scale(0.6);
+          opacity: 0.3;
+        }
+        30% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+      }
+
+      /* 亮色模式下圆点颜色 */
+      @media (prefers-color-scheme: light) {
+        .loader .dot {
+          background: #b0b0b0;
+        }
+        .loader .dot:nth-child(3) {
+          background: linear-gradient(135deg, #f56565, #ed8936);
+        }
+      }
+
+      /* 暗色模式下圆点颜色 */
+      @media (prefers-color-scheme: dark) {
+        .loader .dot {
+          background: #6b6b6b;
+        }
+        .loader .dot:nth-child(3) {
+          background: linear-gradient(135deg, #fc8181, #f6ad55);
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div class="loader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
