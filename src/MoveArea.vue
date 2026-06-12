@@ -21,7 +21,7 @@
     useTemplateRef,
     watch,
   } from "vue";
-  import { getRange } from "./util";
+  import { getRange } from "./utils";
   const selectColorRef = useTemplateRef("moveArea");
 
   const loc = reactive({ x: 0, y: 0 });

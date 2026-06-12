@@ -1,4 +1,4 @@
-import { roundTo, getRange } from "./util";
+import { roundTo, getRange } from "./utils";
 
 // 色板尺寸常量
 export const SELECT_WIDTH = 232;

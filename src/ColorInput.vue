@@ -47,7 +47,7 @@
 <script setup lang="ts">
   import { computed, onUnmounted, ref, watch } from "vue";
   import { hexToRgba, rgbToHex } from "./color";
-  import { roundTo } from "./util";
+  import { roundTo } from "./utils";
 
   const props = defineProps({
     color: {

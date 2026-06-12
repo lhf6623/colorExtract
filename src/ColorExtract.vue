@@ -67,7 +67,7 @@
     BAR_WIDTH,
   } from "./color";
   import { CopyColor, ColorGradient, Grids } from "./common";
-  import { getRange, roundTo } from "./util";
+  import { getRange, roundTo } from "./utils";
   import ColorInput from "./ColorInput.vue";
   import ColorDropper from "./ColorDropper.vue";
   // hex rgba
