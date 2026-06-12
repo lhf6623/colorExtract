@@ -16,6 +16,15 @@
   const emit = defineEmits(["change"]);
   const active = ref("");
 
+  function close() {
+    active.value = "";
+  }
+  function closeListener(e: KeyboardEvent) {
+    if (e.key === "Escape") {
+      close();
+    }
+  }
+
   onMounted(() => {
     window.addEventListener("keydown", closeListener);
   });
@@ -37,13 +46,4 @@
   onUnmounted(() => {
     window.removeEventListener("keydown", closeListener);
   });
-
-  function close() {
-    active.value = "";
-  }
-  function closeListener(e: { key: string }) {
-    if (e.key === "Escape") {
-      close();
-    }
-  }
 </script>

@@ -4,6 +4,7 @@
       <div class="flex justify-between flex-row">
         <input
           v-for="(text, index) in data"
+          :key="index"
           :style="{ width: cls }"
           :type="type === 'hex' ? 'text' : 'number'"
           :value="text"
@@ -64,12 +65,9 @@
     (e: "typeChange", type: "hex" | "rgba"): void;
   }>();
 
-  const isDraw = ref(true);
-
   function testHex(hex: string) {
     hex = hex.replace("#", "").toLowerCase();
     if (![3, 4, 6, 8].includes(hex.length)) return false;
-    // 用正则判断十六进制字符
     return /^[0-9a-f]+$/.test(hex);
   }
   function testRgba(data: number, index: number) {
@@ -78,8 +76,8 @@
     if (index === 3 && data >= 0 && data <= 1) return true;
     return false;
   }
-  const lastEmitTime = ref(0);
-  let drawTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  let debounceTim: ReturnType<typeof setTimeout> | null = null;
 
   function handleChange(e: Event, index: number) {
     const value = (e.target as HTMLInputElement).value;
@@ -89,28 +87,17 @@
     }
     if (props.type === "rgba" && testRgba(+value, index)) {
       data.value[index] = value;
-      if (Date.now() - lastEmitTime.value > 1000) {
-        emit(
-          "colorChange",
-          data.value.map((n) => +n)
-        );
-        lastEmitTime.value = Date.now();
-      }
+      if (debounceTim) clearTimeout(debounceTim);
+      debounceTim = setTimeout(() => {
+        emit("colorChange", data.value.map((n) => +n));
+      }, 200);
     }
-
-    isDraw.value = false;
-    if (drawTimeout) {
-      clearTimeout(drawTimeout);
-    }
-    drawTimeout = setTimeout(() => {
-      isDraw.value = true;
-    }, 1000);
   }
 
   onUnmounted(() => {
-    if (drawTimeout) {
-      clearTimeout(drawTimeout);
-      drawTimeout = null;
+    if (debounceTim) {
+      clearTimeout(debounceTim);
+      debounceTim = null;
     }
   });
 
@@ -128,10 +115,17 @@
 
   watch(
     () => props.color,
-    () => {
-      if (isDraw.value) {
-        data.value =
-          props.type === "hex" ? [rgbToHex(props.color)] : [...props.color];
+    (newColor) => {
+      if (props.type === "hex") {
+        const newHex = rgbToHex(newColor);
+        if (data.value[0] !== newHex) {
+          data.value = [newHex];
+        }
+      } else {
+        const cur = (data.value as string[]).map(Number);
+        if (cur.length !== newColor.length || cur.some((v, i) => v !== newColor[i])) {
+          data.value = [...newColor];
+        }
       }
     }
   );

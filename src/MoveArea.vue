@@ -19,7 +19,7 @@
     reactive,
     ref,
     useTemplateRef,
-    watchEffect,
+    watch,
   } from "vue";
   import { getRange } from "./util";
   const selectColorRef = useTemplateRef("moveArea");
@@ -115,10 +115,10 @@
     window.removeEventListener("resize", getDomClient);
   });
 
-  watchEffect(() => {
-    loc.x = x;
-    loc.y = y;
-  });
+  watch([() => x, () => y], ([newX, newY]) => {
+    loc.x = newX;
+    loc.y = newY;
+  }, { immediate: true });
 </script>
 
 <style scoped>

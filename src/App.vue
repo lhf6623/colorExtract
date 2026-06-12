@@ -5,15 +5,20 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted } from "vue";
+  import { onMounted, onUnmounted } from "vue";
   import ColorExtract from "./ColorExtract.vue";
+  let _prevContextMenu: typeof document.oncontextmenu;
   onMounted(() => {
     // 禁止右键
-    document.oncontextmenu = function (e) {
+    _prevContextMenu = document.oncontextmenu;
+    document.oncontextmenu = (e) => {
       if (import.meta.env.PROD) {
         e.preventDefault();
       }
     };
+  });
+  onUnmounted(() => {
+    document.oncontextmenu = _prevContextMenu;
   });
 </script>
 
