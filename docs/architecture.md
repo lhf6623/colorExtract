@@ -27,8 +27,8 @@ colorExtract/
 │   ├── ColorInput.vue       # RGBA 输入框组件
 │   ├── ColorDropper.vue     # 屏幕取色器组件
 │   ├── MoveArea.vue         # 可拖动区域组件
-│   ├── util.ts              # 工具函数
-│   └── html.d.ts            # 类型声明（EyeDropper, UnoCSS attributify）
+│   ├── utils.ts             # 工具函数（roundTo, getRange）
+│   └── types.d.ts           # 类型声明（EyeDropper, UnoCSS attributify）
 ├── src-tauri/               # Rust 后端
 ├── public/                  # 静态资源
 ├── docs/                    # 项目文档

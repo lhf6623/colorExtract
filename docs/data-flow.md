@@ -23,6 +23,15 @@ EyeDropper.open() → 屏幕 #hex
                  → 返回 { x, y, rightTopIndex, rightTopColor }
 ```
 
-当前反向流程为暴力搜索（遍历所有可能的坐标组合），需优化为 HSV 反算。
+反向流程已用 HSV 反算替代暴力搜索，O(1) 复杂度：
 
-参见 [HSV 模型与坐标反算](hsv-model) 中的反算方案。
+```
+EyeDropper.open() → 屏幕 #hex
+                 → hexToRgba() → RGB
+                 → rgbToHsv() → H, S, V
+                 → H → rightTopIndex → gradientColors[] 查 rightTopColor
+                 → S → x, V → y（色板坐标）
+                 → 返回 { x, y, rightTopIndex, rightTopColor }
+```
+
+详见 [HSV 模型与坐标反算](hsv-model)。

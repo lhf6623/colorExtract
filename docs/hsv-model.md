@@ -54,9 +54,9 @@ function rgbToHsv(r: number, g: number, b: number): [number, number, number] {
 
 ---
 
-## 用 HSV 反算替代暴力搜索
+## HSV 反算实现（v0.2.0 已采用）
 
-当前 `findPositionForColor` 暴力遍历所有 (u, v, gradientIndex)，最坏约 20 亿次计算。HSV 反算只需 O(1)：
+`findPositionForColor` 已从暴力搜索改为 HSV 反算，O(1) 复杂度：
 
 ```ts
 export function findPositionForColor(targetColor: number[]) {
@@ -70,4 +70,4 @@ export function findPositionForColor(targetColor: number[]) {
 }
 ```
 
-**精度说明**：RGB 线性插值与 HSV 插值在高饱和度区域有约 2~3 像素差异（走"弦"而非"弧线"），肉眼不可辨。如需更高精度，可在反算结果上正向验证迭代 1~2 次即可收敛。
+**精度说明**：RGB 线性插值与 HSV 插值在高饱和度区域有约 2~3 像素差异（走"弦"而非"弧线"），肉眼不可辨。

@@ -44,3 +44,18 @@ red → magenta → blue → cyan → lime → yellow → red
 ```
 
 每个相邻色对按 `GRADIENT_SEGMENTS = SELECT_HEIGHT / 6` 步长插值。用户拖动彩虹条时，从数组中取出对应颜色作为色板右上角 `rightTopColor`。
+
+---
+
+## 反向：颜色 → 位置
+
+v0.2.0 起改用 HSV 反算（O(1)）。RGB 先转为 HSV，再由 H/S/V 分量映射回色板坐标：
+
+```
+RGB → rgbToHsv(r,g,b) → [H, S, V]
+  H → rightTopIndex = H / 360 * gradientColors.length
+  S → x = S * SELECT_WIDTH
+  V → y = (1 - V) * SELECT_HEIGHT
+```
+
+详见 [HSV 模型与坐标反算](hsv-model)。
