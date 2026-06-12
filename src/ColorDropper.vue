@@ -15,9 +15,12 @@
 
   const emit = defineEmits(["change"]);
   const active = ref("");
+  let abortController: AbortController | null = null;
 
   function close() {
     active.value = "";
+    abortController?.abort();
+    abortController = null;
   }
   function closeListener(e: KeyboardEvent) {
     if (e.key === "Escape") {
@@ -31,15 +34,21 @@
 
   async function handleEyeDropper() {
     active.value = "active";
+    abortController = new AbortController();
     const eyeDropper = new window.EyeDropper();
     eyeDropper
-      .open()
+      .open({ signal: abortController.signal })
       .then(({ sRGBHex }) => {
         const rgb = hexToRgba(sRGBHex);
         emit("change", rgb);
       })
+      .catch((err: unknown) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        throw err;
+      })
       .finally(() => {
         active.value = "";
+        abortController = null;
       });
   }
 

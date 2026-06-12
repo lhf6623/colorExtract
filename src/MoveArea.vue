@@ -101,8 +101,6 @@
 
     selectColorRef.value!.addEventListener("mousedown", start);
     document.addEventListener("mouseup", stop);
-
-    window.addEventListener("resize", getDomClient);
   });
 
   onUnmounted(() => {
@@ -111,8 +109,6 @@
 
     selectColorRef.value?.removeEventListener("mousedown", start);
     document?.removeEventListener("mouseup", stop);
-
-    window.removeEventListener("resize", getDomClient);
   });
 
   watch([() => x, () => y], ([newX, newY]) => {

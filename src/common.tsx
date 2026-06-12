@@ -1,4 +1,4 @@
-import { computed, defineComponent, onUnmounted, ref } from "vue";
+import { computed, defineComponent, onUnmounted, ref, type PropType } from "vue";
 
 export const Grids = defineComponent({
   props: {
@@ -33,10 +33,17 @@ export const Grids = defineComponent({
     );
   },
 });
-export function ColorGradient(props: { color: string[] }) {
-  const color = props.color?.join(",");
-  return <div style={`background: linear-gradient(to right, ${color});`}></div>;
-}
+export const ColorGradient = defineComponent({
+  props: {
+    color: { type: Array as PropType<string[]>, required: true },
+  },
+  setup(props) {
+    return () => {
+      const color = props.color?.join(",");
+      return <div style={`background: linear-gradient(to right, ${color});`}></div>;
+    };
+  },
+});
 
 export const CopyColor = defineComponent({
   props: {

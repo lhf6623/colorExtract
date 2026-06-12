@@ -7,12 +7,15 @@ declare module "@vue/runtime-dom" {
 export {};
 
 interface EyeDropper {
+  open(options?: { signal?: AbortSignal }): Promise<{ sRGBHex: string }>;
+}
+
+interface EyeDropperConstructor {
   new (): EyeDropper;
-  open: (options?: { signal: AbortSignal }) => Promise<{ sRGBHex: string }>;
 }
 
 declare global {
   interface Window {
-    EyeDropper: EyeDropper;
+    EyeDropper: EyeDropperConstructor;
   }
 }

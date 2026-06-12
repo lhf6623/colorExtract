@@ -92,16 +92,13 @@ export function interpolateColor(rgb1: number[], rgb2: number[], t: number) {
   if (t === 0) return rgb1;
   if (t === 1) return rgb2;
 
-  const { round } = Math;
-  const getInt = (n: number) => round(n);
-
   const [r1, g1, b1] = rgb1;
   const [r2, g2, b2] = rgb2;
   const r = r1 + (r2 - r1) * t;
   const g = g1 + (g2 - g1) * t;
   const b = b1 + (b2 - b1) * t;
 
-  return [getInt(r), getInt(g), getInt(b)];
+  return [Math.round(r), Math.round(g), Math.round(b)];
 }
 export function getSelectColor(x: number, y: number, rt_color?: number[]) {
   const h = SELECT_HEIGHT;
@@ -113,12 +110,6 @@ export function getSelectColor(x: number, y: number, rt_color?: number[]) {
   const y2 = [0, 0, 0]; // 右下角颜色 (黑色)
   const u = 1 - (w - x) / w; // 水平方向
   const v = 1 - (h - y) / h; // 垂直方向
-
-  // 四个角
-  if (u === 0 && v === 0) return x1;
-  if (u === 1 && v === 0) return y1;
-  if (u === 0 && v === 1) return x2;
-  if (u === 1 && v === 1) return y2;
 
   return bilinearInterpolationRGB(x1, y1, x2, y2, u, v);
 }
@@ -156,35 +147,33 @@ function bilinearInterpolationRGB(
   return [Math.round(r), Math.round(g), Math.round(b)];
 }
 
-export function findPositionForColor(targetColor: number[], tolerance = 3) {
-  const white = [255, 255, 255];
-  const black = [0, 0, 0];
-  const segments = gradientColors.length;
-  const maxIterations = 50; // 遍历步数
-  for (let i = 0; i < segments; i++) {
-    const rightTopColor = gradientColors[i];
-    for (let u = 0; u <= 1; u += 1 / maxIterations) {
-      for (let v = 0; v <= 1; v += 1 / maxIterations) {
-        const interpolatedColor = bilinearInterpolationRGB(
-          white,
-          rightTopColor,
-          black,
-          black,
-          u,
-          v
-        );
-        if (
-          Math.abs(interpolatedColor[0] - targetColor[0]) <= tolerance &&
-          Math.abs(interpolatedColor[1] - targetColor[1]) <= tolerance &&
-          Math.abs(interpolatedColor[2] - targetColor[2]) <= tolerance
-        ) {
-          return { x: u, y: v, rightTopIndex: i, rightTopColor };
-        }
-      }
-    }
+/** RGB → HSV，H: 0~360, S: 0~1, V: 0~1 */
+export function rgbToHsv(r: number, g: number, b: number): [number, number, number] {
+  r /= 255; g /= 255; b /= 255;
+  const cMax = Math.max(r, g, b);
+  const cMin = Math.min(r, g, b);
+  const delta = cMax - cMin;
+
+  let h = 0;
+  if (delta !== 0) {
+    if (cMax === r)      h = 60 * (((g - b) / delta) % 6);
+    else if (cMax === g) h = 60 * ((b - r) / delta + 2);
+    else                 h = 60 * ((r - g) / delta + 4);
   }
-  if (tolerance > 50) {
-    return { x: 0, y: 0, rightTopIndex: 0, rightTopColor: gradientColors[0] };
-  }
-  return findPositionForColor(targetColor, tolerance + 1);
+  if (h < 0) h += 360;
+
+  const s = cMax === 0 ? 0 : delta / cMax;
+  const v = cMax;
+  return [h, s, v];
+}
+
+/** 使用 HSV 反算取色点在色板上的位置，O(1) */
+export function findPositionForColor(targetColor: number[]) {
+  const [r, g, b] = targetColor;
+  const [h, s, v] = rgbToHsv(r, g, b);
+  const rightTopIndex = Math.round(h / 360 * (gradientColors.length - 1));
+  const x = s * SELECT_WIDTH;
+  const y = (1 - v) * SELECT_HEIGHT;
+  const rightTopColor = gradientColors[rightTopIndex];
+  return { x, y, rightTopIndex, rightTopColor };
 }

@@ -1,6 +1,7 @@
 <template>
   <div
-    class="shadow w-232px rounded-2px box-border @dark:bg-#282828 bg-white select-none pb-4px"
+    :style="{ width: SELECT_WIDTH + 'px' }"
+    class="shadow rounded-2px box-border @dark:bg-#282828 bg-white select-none pb-4px"
   >
     <MoveArea
       :x="selectLoc.x"
@@ -8,7 +9,7 @@
       @change="handleSelectColor"
       :exceed="true"
     >
-      <div class="select bg-blend-multiply h-128px w-full"></div>
+      <div :style="{ height: SELECT_HEIGHT + 'px' }" class="select bg-blend-multiply w-full"></div>
     </MoveArea>
     <div
       class="flex items-center justify-between py-16px px-16px *:flex-shrink-0"
@@ -123,8 +124,8 @@
       targetColor.value
     );
 
-    selectLoc.x = getRange(Math.round(x * SELECT_WIDTH) | 0, SELECT_WIDTH);
-    selectLoc.y = getRange(Math.round(y * SELECT_HEIGHT) | 0, SELECT_HEIGHT);
+    selectLoc.x = getRange(Math.round(x * SELECT_WIDTH), SELECT_WIDTH);
+    selectLoc.y = getRange(Math.round(y * SELECT_HEIGHT), SELECT_HEIGHT);
     rainbowX.value = rightTopIndex;
     selectColor.value = rightTopColor;
     alpha.value = a;
