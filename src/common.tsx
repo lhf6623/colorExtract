@@ -88,7 +88,7 @@ export const CopyColor = defineComponent({
           class='group absolute top-0 left-0 z-1 b-solid b-1px @dark:b-#fff b-#c7c7c7 overflow-hidden w-32px h-32px rounded-full flex-center transition-all'
         >
           <div class='w-full bg-#fff4 active:bg-#fff5 h-full hidden group-hover:flex flex-center'>
-            <i class={`w-18px h-18px mix-blend-difference ${icon.value}`}></i>
+            <i class={`w-18px h-18px mix-blend-difference ${icon.value}`} style="filter: drop-shadow(0 0 2px rgba(0,0,0,0.7))"></i>
           </div>
         </div>
         <Grids col={6} row={6} />
